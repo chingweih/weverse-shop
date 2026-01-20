@@ -1,5 +1,8 @@
 {
   "name": "weverse-shop",
   "private": true,
-  "workspaces": ["packages/*"]
+  "workspaces": ["packages/*"],
+  "devDependencies": {
+    "prettier": "^3.8.0"
+  }
 }
