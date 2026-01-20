@@ -18,14 +18,29 @@ export default {
     ctx: ExecutionContext,
   ) => {
     const task = async () => {
-      const saleIds = [43782, 51619]
+      const saleIds = [43782]
 
       const salesResult = saleIds.map(async (id) => {
         const sales = await getSale(id, {
           currency: 'KRW',
           locale: 'zh-tw',
         })
-        await slack({ text: `商品通知：${sales.name} ${sales.status}` })
+
+        console.log(sales.option.options)
+
+        if (sales.status !== 'SOLD_OUT') {
+          await slack({
+            text: `*[商品到貨通知]*
+
+${sales.name} 現在有貨
+款式：${sales.option.options
+              .filter((option) => !option.isSoldOut)
+              .map((option) => option.saleOptionName)
+              .join('、')}
+
+<https://shop.weverse.io/zh-tw/shop/KRW/sales/${id}|前往查看>`,
+          })
+        }
       })
 
       await Promise.all(salesResult)
