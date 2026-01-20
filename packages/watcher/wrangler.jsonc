@@ -11,9 +11,9 @@
   // "compatibility_flags": [
   //   "nodejs_compat"
   // ],
-  "vars": {
-    "SLACK_WEBHOOK_URL": "<override_in_secrets>",
-  },
+  // "vars": {
+  //   "SOME_ENV": "VALUE",
+  // },
   // "kv_namespaces": [
   //   {
   //     "binding": "MY_KV_NAMESPACE",
