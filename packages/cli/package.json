@@ -1,0 +1,23 @@
+{
+  "name": "@weverse-shop/cli",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "cli": "bun run src"
+  },
+  "dependencies": {
+    "@weverse-shop/core": "workspace:*",
+    "commander": "^14.0.2",
+    "zod": "^4.3.5"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

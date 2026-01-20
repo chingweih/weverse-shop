@@ -2,7 +2,7 @@
 import { Command } from 'commander'
 
 import { getSaleCommand } from './commands'
-import { LOCALES, CURRENCIES, DEFAULT_LOCALE, DEFAULT_CURRENCY } from '../lib/constants'
+import { LOCALES, CURRENCIES, DEFAULT_LOCALE, DEFAULT_CURRENCY } from '@weverse-shop/core'
 
 const program = new Command()
 

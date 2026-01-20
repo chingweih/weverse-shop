@@ -1,7 +1,6 @@
 import * as cheerio from 'cheerio'
 import { mkdir, readFile, writeFile } from 'fs/promises'
 import { existsSync } from 'fs'
-import { dirname } from 'path'
 
 import { SHOP_BASE_URL, BUILDID_CACHE_FILE, BUILDID_CACHE_TTL, CACHE_DIR } from './constants'
 

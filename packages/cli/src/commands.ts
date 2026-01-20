@@ -1,7 +1,7 @@
-import { getSale } from '../lib/client'
-import { getBuildId } from '../lib/buildid'
+import { getSale } from '@weverse-shop/core'
+import { getBuildId } from '@weverse-shop/core'
 
-import type { SaleData, Locale, Currency } from '../lib/types'
+import type { SaleData, Locale, Currency } from '@weverse-shop/core'
 
 type SaleCommandOptions = {
   saleId: number

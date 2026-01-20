@@ -1,6 +1,6 @@
-export { getSale } from './lib/client'
-export { getBuildId } from './lib/buildid'
-export { parseNextDataResponse, extractArtistIdFromResponse } from './lib/parser'
+export { getSale } from './client'
+export { getBuildId } from './buildid'
+export { parseNextDataResponse, extractArtistIdFromResponse } from './parser'
 
 export type {
   SaleData,
@@ -16,7 +16,7 @@ export type {
   GetSaleOptions,
   Locale,
   Currency,
-} from './lib/types'
+} from './types'
 
 export {
   SHOP_BASE_URL,
@@ -24,4 +24,4 @@ export {
   CURRENCIES,
   DEFAULT_LOCALE,
   DEFAULT_CURRENCY,
-} from './lib/constants'
+} from './constants'
