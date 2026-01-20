@@ -35,10 +35,10 @@
     "packages/watcher": {
       "name": "watcher",
       "dependencies": {
+        "@weverse-shop/core": "workspace:*",
         "hono": "^4.11.4",
       },
       "devDependencies": {
-        "@cloudflare/workers-types": "^4.20260120.0",
         "wrangler": "^4.4.0",
       },
     },
