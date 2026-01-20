@@ -7,13 +7,13 @@
     "crons": [
       "*/15 * * * *", // Every 15 minutes
     ]
-  }
+  },
   // "compatibility_flags": [
   //   "nodejs_compat"
   // ],
-  // "vars": {
-  //   "MY_VAR": "my-variable"
-  // },
+  "vars": {
+    "SLACK_WEBHOOK_URL": "<override_in_secrets>"
+  },
   // "kv_namespaces": [
   //   {
   //     "binding": "MY_KV_NAMESPACE",
