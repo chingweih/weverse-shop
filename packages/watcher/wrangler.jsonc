@@ -1,18 +1,18 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "watcher",
+  "name": "weverse-shop-watcher",
   "main": "src/index.ts",
   "compatibility_date": "2026-01-20",
   "triggers": {
     "crons": [
       "*/15 * * * *", // Every 15 minutes
-    ]
+    ],
   },
   // "compatibility_flags": [
   //   "nodejs_compat"
   // ],
   "vars": {
-    "SLACK_WEBHOOK_URL": "<override_in_secrets>"
+    "SLACK_WEBHOOK_URL": "<override_in_secrets>",
   },
   // "kv_namespaces": [
   //   {
@@ -36,8 +36,10 @@
   // "ai": {
   //   "binding": "AI"
   // },
-  // "observability": {
-  //   "enabled": true,
-  //   "head_sampling_rate": 1
-  // }
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+    },
+  },
 }
