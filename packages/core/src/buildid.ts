@@ -1,10 +1,11 @@
 import * as cheerio from 'cheerio'
-import { mkdir, readFile, writeFile } from 'fs/promises'
-import { existsSync } from 'fs'
 
-import { SHOP_BASE_URL, BUILDID_CACHE_FILE, BUILDID_CACHE_TTL, CACHE_DIR } from './constants'
+import { SHOP_BASE_URL, BUILDID_CACHE_TTL } from './constants'
 
 import type { BuildIdCacheData } from './types'
+
+// In-memory cache (persists within worker isolate lifecycle)
+let buildIdCache: BuildIdCacheData | null = null
 
 export async function fetchBuildIdFromHomepage(): Promise<string> {
   const response = await fetch(SHOP_BASE_URL)
@@ -46,36 +47,15 @@ export async function fetchBuildIdFromHomepage(): Promise<string> {
   )
 }
 
-export async function readBuildIdCache(): Promise<BuildIdCacheData | null> {
-  try {
-    if (!existsSync(BUILDID_CACHE_FILE)) {
-      return null
-    }
-
-    const content = await readFile(BUILDID_CACHE_FILE, 'utf-8')
-    const data = JSON.parse(content) as BuildIdCacheData
-
-    if (typeof data.buildId !== 'string' || typeof data.timestamp !== 'number') {
-      return null
-    }
-
-    return data
-  } catch {
-    return null
-  }
+export function readBuildIdCache(): BuildIdCacheData | null {
+  return buildIdCache
 }
 
-export async function writeBuildIdCache(buildId: string): Promise<void> {
-  const data: BuildIdCacheData = {
+export function writeBuildIdCache(buildId: string): void {
+  buildIdCache = {
     buildId,
     timestamp: Date.now(),
   }
-
-  if (!existsSync(CACHE_DIR)) {
-    await mkdir(CACHE_DIR, { recursive: true })
-  }
-
-  await writeFile(BUILDID_CACHE_FILE, JSON.stringify(data, null, 2), 'utf-8')
 }
 
 export function isCacheValid(cache: BuildIdCacheData): boolean {
@@ -85,13 +65,13 @@ export function isCacheValid(cache: BuildIdCacheData): boolean {
 
 export async function getBuildId(forceRefresh = false): Promise<string> {
   if (!forceRefresh) {
-    const cache = await readBuildIdCache()
+    const cache = readBuildIdCache()
     if (cache && isCacheValid(cache)) {
       return cache.buildId
     }
   }
 
   const buildId = await fetchBuildIdFromHomepage()
-  await writeBuildIdCache(buildId)
+  writeBuildIdCache(buildId)
   return buildId
 }

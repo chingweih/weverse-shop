@@ -1,6 +1,4 @@
 export const SHOP_BASE_URL = 'https://shop.weverse.io'
-export const CACHE_DIR = '.cache'
-export const BUILDID_CACHE_FILE = `${CACHE_DIR}/buildid.json`
 export const BUILDID_CACHE_TTL = 3600000
 
 export const DEFAULT_LOCALE = 'en'
