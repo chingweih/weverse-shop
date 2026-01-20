@@ -26,8 +26,6 @@ export default {
           locale: 'zh-tw',
         })
 
-        console.log(sales.option.options)
-
         if (sales.status !== 'SOLD_OUT') {
           await slack({
             text: `*[商品到貨通知]*
