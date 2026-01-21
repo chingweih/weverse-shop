@@ -38,6 +38,12 @@ lineBot.use('*', async (c, next) => {
 
 async function handleLineEvent(event: WebhookEvent) {
   try {
+    if (event.source.userId) {
+      lineClient.showLoadingAnimation({
+        chatId: event.source.userId,
+      })
+    }
+
     switch (event.type) {
       case 'message':
         if (event.message.type !== 'text') {
