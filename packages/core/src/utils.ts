@@ -3,5 +3,5 @@ export function extractSaleIdFromUrl(url: string) {
 
   const match = url.match(regex)
 
-  return match ? match[1] : null
+  return match ? Number(match[1]) : null
 }
