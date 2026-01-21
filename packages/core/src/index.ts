@@ -25,3 +25,5 @@ export {
   DEFAULT_LOCALE,
   DEFAULT_CURRENCY,
 } from './constants'
+
+export { extractSaleIdFromUrl } from './utils'
