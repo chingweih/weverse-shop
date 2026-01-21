@@ -1,4 +1,4 @@
-import { getSale } from '@weverse-shop/core'
+import { getSale, SalesStatus } from '@weverse-shop/core'
 import { Hono } from 'hono'
 import { slack } from './slack'
 import { lineBot } from './line'
@@ -31,7 +31,7 @@ export default {
           locale: 'zh-tw',
         })
 
-        if (sales.status !== 'SOLD_OUT') {
+        if (sales.status !== SalesStatus.SoldOut) {
           await slack({
             text: `*[商品到貨通知]*
 

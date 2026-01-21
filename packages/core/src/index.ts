@@ -24,6 +24,7 @@ export {
   CURRENCIES,
   DEFAULT_LOCALE,
   DEFAULT_CURRENCY,
+  SalesStatus,
 } from './constants'
 
 export { extractSaleIdFromUrl } from './utils'
