@@ -1,6 +1,7 @@
 import { getSale } from '@weverse-shop/core'
 import { Hono } from 'hono'
 import { slack } from './slack'
+import { lineBot } from './line'
 
 const app = new Hono()
 
@@ -8,10 +9,14 @@ app.get('/', (c) => {
   return c.text('Hello from @weverse-shop/watcher')
 })
 
+app.route('/line', lineBot)
+
 export default {
+  // REST API Handler
   fetch: app.fetch,
-  // See wrangler.jsonc for information on cron triggers.
-  // Currently, it's set to run every 15 minutes.
+
+  // Cron job hanlder
+  // Run every 15 minutes, see wrangler.jsonc for more information
   scheduled: async (
     controller: ScheduledController,
     env: Cloudflare.Env,

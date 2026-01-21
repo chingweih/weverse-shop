@@ -8,9 +8,7 @@
       "*/15 * * * *", // Every 15 minutes
     ],
   },
-  // "compatibility_flags": [
-  //   "nodejs_compat"
-  // ],
+  "compatibility_flags": ["nodejs_compat"],
   // "vars": {
   //   "SOME_ENV": "VALUE",
   // },

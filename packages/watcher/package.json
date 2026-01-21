@@ -7,10 +7,11 @@
     "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {
+    "@line/bot-sdk": "^10.6.0",
     "@weverse-shop/core": "workspace:*",
     "hono": "^4.11.4"
   },
   "devDependencies": {
-    "wrangler": "^4.4.0"
+    "wrangler": "^4.59.3"
   }
 }
