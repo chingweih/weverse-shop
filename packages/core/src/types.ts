@@ -96,7 +96,7 @@ export const saleDataSchema = z.object({
   notificationInfos: z.array(notificationInfoSchema),
   returnInfosId: z.number().optional(),
   relatedSaleGroupId: z.number().optional(),
-  metaTag: z.record(z.unknown()).optional(),
+  metaTag: z.record(z.string(), z.unknown()).optional(),
 })
 
 export type PriceInfo = z.infer<typeof priceInfoSchema>
