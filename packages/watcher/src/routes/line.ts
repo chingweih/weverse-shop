@@ -138,7 +138,7 @@ async function handleLineMessage(
       {
         type: 'text',
         text: `哈囉，請輸入以下指令來跟機器人互動
-- /追 {Weverse Shop 連結}：開始選擇訂閱機制`,
+- ${Commands.Track} {Weverse Shop 連結}：開始選擇訂閱機制`,
       },
     ],
   })
