@@ -17,6 +17,7 @@ import { upsertSubscription } from '../data/subscriptions'
 import { User } from '../data/types'
 import { getUser } from '../data/users'
 import { isVariantStored, upsertVariantsFromSale } from '../data/variants'
+import { card } from '../lib/line/ui/card'
 
 export type LineBotRoute = { Variables: { user: User } }
 
@@ -74,76 +75,22 @@ async function handleLineMessage(
     return await line.replyMessage({
       replyToken,
       messages: [
-        {
-          type: 'flex',
-          altText: '商品查詢結果',
-          contents: {
-            type: 'bubble',
-            hero: {
-              type: 'image',
-              url: sale.thumbnailImageUrls[0],
-              size: 'full',
-              aspectRatio: '20:13',
-              aspectMode: 'cover',
+        card({
+          alt: '商品查詢結果',
+          imageUrl: sale.thumbnailImageUrls[0],
+          title: '【商品查詢結果】',
+          description: `以下是 ${sale.name} 的所有品項，請選擇想要訂閱的品項，或是訂閱任一品項`,
+          actions: [
+            ...sale.option.options.map((option) => ({
+              label: option.saleOptionName,
+              message: `/訂閱 ${saleId} ${option.saleStockId}`,
+            })),
+            {
+              label: '訂閱任一品項',
+              message: `/訂閱 ${saleId}`,
             },
-            body: {
-              type: 'box',
-              layout: 'vertical',
-              contents: [
-                {
-                  type: 'text',
-                  text: '【商品查詢結果】',
-                  weight: 'bold',
-                  size: 'xl',
-                },
-                {
-                  type: 'box',
-                  layout: 'vertical',
-                  margin: 'lg',
-                  spacing: 'sm',
-                  contents: [
-                    {
-                      type: 'text',
-                      text: `以下是 ${sale.name} 的所有品項，請選擇想要訂閱的品項，或是訂閱任一品項`,
-                      wrap: true,
-                    },
-                  ],
-                },
-              ],
-            },
-            footer: {
-              type: 'box',
-              layout: 'vertical',
-              spacing: 'sm',
-              contents: [
-                ...sale.option.options.map(
-                  (option) =>
-                    ({
-                      type: 'button',
-                      style: 'link',
-                      height: 'sm',
-                      action: {
-                        type: 'message',
-                        label: option.saleOptionName,
-                        text: `/訂閱 ${saleId} ${option.saleStockId}`,
-                      },
-                    }) as const,
-                ),
-                {
-                  type: 'button',
-                  style: 'link',
-                  height: 'sm',
-                  action: {
-                    type: 'message',
-                    label: '訂閱任一品項',
-                    text: `/訂閱 ${saleId}`,
-                  },
-                },
-              ],
-              flex: 0,
-            },
-          },
-        },
+          ],
+        }),
       ],
     })
   }
