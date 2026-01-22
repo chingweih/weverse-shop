@@ -1,14 +1,26 @@
-import {
-  validateSignature,
-  LINE_SIGNATURE_HTTP_HEADER_NAME,
+import type {
+  MessageEvent,
+  WebhookEvent,
+  WebhookRequestBody,
 } from '@line/bot-sdk'
-import type { WebhookRequestBody, WebhookEvent } from '@line/bot-sdk'
-import { extractSaleIdFromUrl, getSale, SalesStatus } from '@weverse-shop/core'
+import {
+  LINE_SIGNATURE_HTTP_HEADER_NAME,
+  validateSignature,
+} from '@line/bot-sdk'
+import { extractSaleIdFromUrl, getSale } from '@weverse-shop/core'
 import { env } from 'cloudflare:workers'
-import { Hono } from 'hono'
+import { Context, Hono } from 'hono'
 import { line } from './apis/line'
+import { Commands } from './constants/commands'
+import { isProductStored, upsertProduct } from './data/products'
+import { upsertSubscription } from './data/subscriptions'
+import { User } from './data/types'
+import { getUser } from './data/users'
+import { isVariantStored, upsertVariantsFromSale } from './data/variants'
 
-const lineBot = new Hono()
+export type LineBotRoute = { Variables: { user: User } }
+
+const lineBot = new Hono<LineBotRoute>()
 
 lineBot.use('*', async (c, next) => {
   if (!env.LINE_BOT_SECRET) {
@@ -32,87 +44,180 @@ lineBot.use('*', async (c, next) => {
   await next()
 })
 
-async function handleLineEvent(event: WebhookEvent) {
-  try {
-    if (event.source.userId) {
-      line.showLoadingAnimation({
-        chatId: event.source.userId,
-      })
+async function handleLineMessage(
+  c: Context<LineBotRoute>,
+  event: MessageEvent,
+) {
+  if (event.message.type !== 'text') {
+    // Only handle text message
+    return null
+  }
+
+  const user = c.get('user')
+
+  const { replyToken } = event
+  const { text } = event.message
+
+  if (text.startsWith(Commands.Track)) {
+    const url = text.replace(Commands.Track, '').trim()
+    const saleId = extractSaleIdFromUrl(url)
+
+    if (!saleId) {
+      return null
     }
 
-    switch (event.type) {
-      case 'message':
-        if (event.message.type !== 'text') {
-          return null
-        }
+    const sale = await getSale(saleId)
 
-        const {
-          message: { text },
-        } = event
+    const product = await upsertProduct({ sale })
+    const updatedVariants = await upsertVariantsFromSale({ sale, product })
 
-        const saleId = extractSaleIdFromUrl(text)
-
-        if (!saleId) {
-          return line.replyMessage({
-            replyToken: event.replyToken,
-            messages: [
-              {
-                type: 'text',
-                text: '[ERROR] 無法處理此連結',
-              },
-            ],
-          })
-        }
-
-        const sales = await getSale(saleId, {
-          currency: 'KRW',
-          locale: 'zh-tw',
-        })
-
-        return line.replyMessage({
-          replyToken: event.replyToken,
-          messages: [
-            {
-              type: 'text',
-              text: `【商品查詢結果】
-
-${sales.name} 目前「${sales.status !== SalesStatus.SoldOut ? '有貨' : '缺貨'}」
-款式：${sales.option.options
-                .filter((option) => !option.isSoldOut)
-                .map((option) => option.saleOptionName)
-                .join('、')}
-
-手刀下單｜https://shop.weverse.io/zh-tw/shop/KRW/sales/${saleId}`,
-            },
-            {
+    return await line.replyMessage({
+      replyToken,
+      messages: [
+        {
+          type: 'flex',
+          altText: '商品查詢結果',
+          contents: {
+            type: 'bubble',
+            hero: {
               type: 'image',
-              originalContentUrl: sales.thumbnailImageUrls[0],
-              previewImageUrl: sales.thumbnailImageUrls[0],
+              url: sale.thumbnailImageUrls[0],
+              size: 'full',
+              aspectRatio: '20:13',
+              aspectMode: 'cover',
             },
-          ],
-        })
-      default:
-        return null
-    }
-  } catch (e) {
-    if ('replyToken' in event) {
-      return line.replyMessage({
-        replyToken: event.replyToken,
-        messages: [
-          {
-            type: 'text',
-            text: '[ERROR] 無法處理此連結',
+            body: {
+              type: 'box',
+              layout: 'vertical',
+              contents: [
+                {
+                  type: 'text',
+                  text: '【商品查詢結果】',
+                  weight: 'bold',
+                  size: 'xl',
+                },
+                {
+                  type: 'box',
+                  layout: 'vertical',
+                  margin: 'lg',
+                  spacing: 'sm',
+                  contents: [
+                    {
+                      type: 'text',
+                      text: `以下是 ${sale.name} 的所有品項，請選擇想要訂閱的品項，或是訂閱任一品項`,
+                      wrap: true,
+                    },
+                  ],
+                },
+              ],
+            },
+            footer: {
+              type: 'box',
+              layout: 'vertical',
+              spacing: 'sm',
+              contents: [
+                ...sale.option.options.map(
+                  (option) =>
+                    ({
+                      type: 'button',
+                      style: 'link',
+                      height: 'sm',
+                      action: {
+                        type: 'message',
+                        label: option.saleOptionName,
+                        text: `/訂閱 ${saleId} ${option.saleStockId}`,
+                      },
+                    }) as const,
+                ),
+                {
+                  type: 'button',
+                  style: 'link',
+                  height: 'sm',
+                  action: {
+                    type: 'message',
+                    label: '訂閱任一品項',
+                    text: `/訂閱 ${saleId}`,
+                  },
+                },
+              ],
+              flex: 0,
+            },
           },
-        ],
+        },
+      ],
+    })
+  }
+
+  if (text.startsWith(Commands.Subscribe)) {
+    const [saleId, variantStockId] = text
+      .replace(Commands.Subscribe, '')
+      .trim()
+      .split(' ')
+
+    if (!saleId) {
+      return null
+    }
+
+    if (!isProductStored({ saleId })) {
+      return null
+    }
+
+    if (variantStockId && !isVariantStored({ variantStockId })) {
+      return null
+    }
+
+    const insertedSubscription = await upsertSubscription({
+      userId: user.id,
+      saleId,
+      variantStockId,
+    })
+
+    if (!insertedSubscription) {
+      return line.replyMessage({
+        replyToken,
+        messages: [{ type: 'text', text: '[ERROR] 無法新增，可能已經新增過' }],
       })
     }
+
+    return line.replyMessage({
+      replyToken,
+      messages: [{ type: 'text', text: '已完成訂閱' }],
+    })
+  }
+
+  return null
+}
+
+async function handleLineEvent(c: Context<LineBotRoute>, event: WebhookEvent) {
+  const {
+    source: { userId: lineUserId },
+    type,
+  } = event
+
+  if (!lineUserId) {
+    return null
+  }
+
+  line.showLoadingAnimation({
+    chatId: lineUserId,
+  })
+
+  const user = await getUser({ lineUserId })
+  console.log({ user })
+  c.set('user', user)
+
+  switch (type) {
+    case 'message':
+      return handleLineMessage(c, event)
+    default:
+      return null
   }
 }
 
 lineBot.post('/message', async (c) => {
   const body: WebhookRequestBody = await c.req.json()
 
-  return Promise.all(body.events.map(handleLineEvent))
+  return Promise.all(body.events.map((event) => handleLineEvent(c, event)))
     .then((result) => c.json(result))
     .catch((e: Error) => {
       console.error(e)
