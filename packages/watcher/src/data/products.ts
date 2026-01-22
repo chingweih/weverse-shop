@@ -17,7 +17,10 @@ export async function upsertProduct({ sale }: { sale: SaleData }) {
       saleId,
       lastCheckedAt: new Date(),
     })
-    .onConflictDoNothing()
+    .onConflictDoUpdate({
+      target: productsTable.saleId,
+      set: { lastCheckedAt: new Date() },
+    })
     .returning()
 
   return product
