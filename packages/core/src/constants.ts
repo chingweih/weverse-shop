@@ -9,4 +9,5 @@ export const CURRENCIES = ['USD', 'KRW', 'JPY', 'CNY', 'MXN'] as const
 
 export enum SalesStatus {
   SoldOut = 'SOLD_OUT',
+  InStock = 'SALE',
 }
