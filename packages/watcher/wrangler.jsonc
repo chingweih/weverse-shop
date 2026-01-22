@@ -24,13 +24,14 @@
   //     "bucket_name": "my-bucket"
   //   }
   // ],
-  // "d1_databases": [
-  //   {
-  //     "binding": "MY_DB",
-  //     "database_name": "my-database",
-  //     "database_id": ""
-  //   }
-  // ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "weverse-shop-watcher-d1",
+      "database_id": "aa649373-922c-4f23-90b9-9f98ea3ac349",
+      "migrations_dir": "./drizzle",
+    },
+  ],
   // "ai": {
   //   "binding": "AI"
   // },
