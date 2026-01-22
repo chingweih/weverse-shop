@@ -5,11 +5,11 @@
     "moduleResolution": "Bundler",
     "strict": true,
     "skipLibCheck": true,
-    "lib": [
-      "ESNext"
-    ],
+    "lib": ["ESNext"],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
-    "types": ["./worker-configuration.d.ts"]
+    "rootDir": "./src",
+    "types": ["./worker-configuration.d.ts"],
   },
+  "exclude": ["drizzle.config.ts"],
 }
