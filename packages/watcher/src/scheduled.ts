@@ -132,6 +132,8 @@ export async function handleScheduledTask() {
 - Products count: ${products.length}
 - Subscriptions count: ${products.reduce((sum, product) => sum + product.subscriptions.length, 0)}
 - Notification Sent: ${notificationSent}
+
+${new Date().toISOString()}
 `,
   })
 }
