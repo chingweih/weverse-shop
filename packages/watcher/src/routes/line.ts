@@ -150,7 +150,6 @@ async function handleLineEvent(c: Context<LineBotRoute>, event: WebhookEvent) {
   })
 
   const user = await getUser({ lineUserId })
-  console.log({ user })
   c.set('user', user)
 
   switch (type) {
