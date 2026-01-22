@@ -122,7 +122,7 @@ async function handleLineMessage(
     if (!insertedSubscription) {
       return line.replyMessage({
         replyToken,
-        messages: [{ type: 'text', text: '[ERROR] 無法新增，可能已經新增過' }],
+        messages: [{ type: 'text', text: '已完成訂閱（你可能已經訂閱過了）' }],
       })
     }
 
@@ -132,7 +132,16 @@ async function handleLineMessage(
     })
   }
 
-  return null
+  return line.replyMessage({
+    replyToken,
+    messages: [
+      {
+        type: 'text',
+        text: `哈囉，請輸入以下指令來跟機器人互動
+- /追 {Weverse Shop 連結}：開始選擇訂閱機制`,
+      },
+    ],
+  })
 }
 
 async function handleLineEvent(c: Context<LineBotRoute>, event: WebhookEvent) {
