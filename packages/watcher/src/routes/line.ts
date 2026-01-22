@@ -28,6 +28,8 @@ export type LineBotRoute = { Variables: { user: User } }
 
 const lineBotRoute = new Hono<LineBotRoute>()
 
+// Validate LINE request signature,
+// see https://developers.line.biz/en/docs/messaging-api/verify-webhook-signature/
 lineBotRoute.use('*', async (c, next) => {
   if (!env.LINE_BOT_SECRET) {
     throw new Error('Line bot secret not defined.')
