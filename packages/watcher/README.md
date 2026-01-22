@@ -1,21 +1,51 @@
-```txt
-npm install
-npm run dev
+# @weverse-shop/watcher
+
+Cloudflare Worker that monitors Weverse Shop products and sends notifications via LINE bot when items come back in stock. Includes scheduled tasks for automatic monitoring and Slack notifications for system alerts.
+
+## Features
+
+- LINE bot integration for user subscriptions and notifications
+- Scheduled monitoring (runs every 15 minutes)
+- Slack notifications for system events
+- Drizzle ORM with Cloudflare D1 database
+- REST API built with Hono
+
+## Development
+
+```bash
+bun run dev
 ```
 
-```txt
-npm run deploy
+## Deployment
+
+```bash
+bun run deploy
 ```
 
-[For generating/synchronizing types based on your Worker configuration run](https://developers.cloudflare.com/workers/wrangler/commands/#types):
+## Database
 
-```txt
-npm run cf-typegen
+Generate migrations:
+
+```bash
+bun run db:generate
 ```
 
-Pass the `CloudflareBindings` as generics when instantiation `Hono`:
+Apply migrations:
 
-```ts
-// src/index.ts
-const app = new Hono<{ Bindings: CloudflareBindings }>()
+```bash
+bun run db:migrate
+```
+
+## Other Commands
+
+Type checking:
+
+```bash
+bun run check-types
+```
+
+Local tunnel (for LINE webhook testing):
+
+```bash
+bun run tunnel
 ```

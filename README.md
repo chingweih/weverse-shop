@@ -1,15 +1,22 @@
 # weverse-shop
 
-To install dependencies:
+A monorepo for tracking Weverse Shop products and sending notifications when items come back in stock.
+
+> [!NOTE]
+> This is my hobby project to learn more about bun and cloudflare workers, feel free to let me know if you have any suggestions.
+
+## Packages
+
+- **@weverse-shop/core** - API client for fetching Weverse Shop product data
+- **@weverse-shop/cli** - Command-line interface for querying products
+- **@weverse-shop/watcher** - Cloudflare Worker with LINE bot and scheduled monitoring
+
+## Installation
 
 ```bash
 bun install
 ```
 
-To run:
+## Usage
 
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.3.6. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+See individual package READMEs for detailed usage instructions.
