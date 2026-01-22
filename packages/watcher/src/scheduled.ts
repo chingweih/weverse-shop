@@ -2,6 +2,7 @@ import { getSale, SalesStatus } from '@weverse-shop/core'
 import { line } from './apis/line'
 import { db } from './db'
 import { card } from './lib/line/ui/card'
+import { slack } from './slack'
 
 function shouldNotify({
   previous,
@@ -15,6 +16,8 @@ function shouldNotify({
 }
 
 export async function handleScheduledTask() {
+  let notificationSent = 0
+
   const products = await Promise.all(
     (
       await db.query.productsTable.findMany({
@@ -75,6 +78,7 @@ export async function handleScheduledTask() {
             }),
           ],
         })
+        notificationSent++
         continue
       }
 
@@ -116,8 +120,18 @@ export async function handleScheduledTask() {
             }),
           ],
         })
+        notificationSent++
         continue
       }
     }
   }
+
+  await slack({
+    text: `*Cron Job Ran Successfully*
+
+- Products count: ${products.length}
+- Subscriptions count: ${products.reduce((sum, product) => sum + product.subscriptions.length, 0)}
+- Notification Sent: ${notificationSent}
+`,
+  })
 }
