@@ -17,7 +17,7 @@ export function card({
 }): messagingApi.Message {
   return {
     type: 'flex',
-    altText: alt ?? 'Flex Message',
+    altText: alt ?? title,
     contents: {
       type: 'bubble',
       hero: {
