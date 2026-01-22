@@ -40,7 +40,7 @@ export const variantsTable = sqliteTable(
       .notNull()
       .references(() => productsTable.id, { onDelete: 'cascade' }),
     variantName: text('variant_name').notNull(),
-    variantId: text('variant_id').notNull(),
+    variantStockId: text('variant_id').notNull(),
     lastStatus: text('last_status'),
     createdAt: int('created_at', { mode: 'timestamp' }).default(
       sql`CURRENT_TIMESTAMP`,
@@ -49,7 +49,7 @@ export const variantsTable = sqliteTable(
   (table) => [
     uniqueIndex('unique_variant_per_product').on(
       table.productId,
-      table.variantId,
+      table.variantStockId,
     ),
     index('idx_variants_product').on(table.productId),
   ],
