@@ -15,6 +15,13 @@
       "when": 1769062678894,
       "tag": "0001_sour_victor_mancha",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1769063209623,
+      "tag": "0002_unique_rhodey",
+      "breakpoints": true
     }
   ]
 }

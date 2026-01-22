@@ -19,13 +19,17 @@ export const usersRelations = relations(usersTable, ({ many }) => ({
   subscriptions: many(subscriptionsTable),
 }))
 
-export const productsTable = sqliteTable('products', {
-  id: int().primaryKey({ autoIncrement: true }),
-  type: text({ enum: ['weverse'] }).default('weverse'),
-  saleId: text('sale_id').notNull(),
-  lastCheckedAt: int('last_checked_at', { mode: 'timestamp' }),
-  createdAt: int('created_at').default(new Date().getTime()),
-})
+export const productsTable = sqliteTable(
+  'products',
+  {
+    id: int().primaryKey({ autoIncrement: true }),
+    type: text({ enum: ['weverse'] }).default('weverse'),
+    saleId: text('sale_id').notNull(),
+    lastCheckedAt: int('last_checked_at', { mode: 'timestamp' }),
+    createdAt: int('created_at').default(new Date().getTime()),
+  },
+  (table) => [uniqueIndex('unique_type_saleId').on(table.type, table.saleId)],
+)
 
 export const productsRelations = relations(productsTable, ({ many }) => ({
   variants: many(variantsTable),
