@@ -10,19 +10,19 @@ import {
 import { extractSaleIdFromUrl, getSale } from '@weverse-shop/core'
 import { env } from 'cloudflare:workers'
 import { Context, Hono } from 'hono'
-import { line } from './apis/line'
-import { Commands } from './constants/commands'
-import { isProductStored, upsertProduct } from './data/products'
-import { upsertSubscription } from './data/subscriptions'
-import { User } from './data/types'
-import { getUser } from './data/users'
-import { isVariantStored, upsertVariantsFromSale } from './data/variants'
+import { line } from '../apis/line'
+import { Commands } from '../constants/commands'
+import { isProductStored, upsertProduct } from '../data/products'
+import { upsertSubscription } from '../data/subscriptions'
+import { User } from '../data/types'
+import { getUser } from '../data/users'
+import { isVariantStored, upsertVariantsFromSale } from '../data/variants'
 
 export type LineBotRoute = { Variables: { user: User } }
 
-const lineBot = new Hono<LineBotRoute>()
+const lineBotRoute = new Hono<LineBotRoute>()
 
-lineBot.use('*', async (c, next) => {
+lineBotRoute.use('*', async (c, next) => {
   if (!env.LINE_BOT_SECRET) {
     throw new Error('Line bot secret not defined.')
   }
@@ -214,7 +214,7 @@ async function handleLineEvent(c: Context<LineBotRoute>, event: WebhookEvent) {
   }
 }
 
-lineBot.post('/message', async (c) => {
+lineBotRoute.post('/message', async (c) => {
   const body: WebhookRequestBody = await c.req.json()
 
   return Promise.all(body.events.map((event) => handleLineEvent(c, event)))
@@ -224,4 +224,4 @@ lineBot.post('/message', async (c) => {
     })
 })
 
-export { lineBot }
+export { lineBotRoute }

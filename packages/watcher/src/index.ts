@@ -1,7 +1,7 @@
 import { getSale, SalesStatus } from '@weverse-shop/core'
 import { Hono } from 'hono'
 import { slack } from './slack'
-import { lineBot } from './line'
+import { lineBotRoute } from './routes/line'
 
 const app = new Hono()
 
@@ -9,7 +9,7 @@ app.get('/', (c) => {
   return c.text('Hello from @weverse-shop/watcher')
 })
 
-app.route('/line', lineBot)
+app.route('/line', lineBotRoute)
 
 export default {
   // REST API Handler
