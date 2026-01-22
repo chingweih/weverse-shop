@@ -3,14 +3,10 @@ import {
   LINE_SIGNATURE_HTTP_HEADER_NAME,
 } from '@line/bot-sdk'
 import type { WebhookRequestBody, WebhookEvent } from '@line/bot-sdk'
-import { messagingApi } from '@line/bot-sdk'
 import { extractSaleIdFromUrl, getSale, SalesStatus } from '@weverse-shop/core'
 import { env } from 'cloudflare:workers'
 import { Hono } from 'hono'
-
-const lineClient = new messagingApi.MessagingApiClient({
-  channelAccessToken: env.LINE_BOT_ACCESS_TOKEN,
-})
+import { line } from './apis/line'
 
 const lineBot = new Hono()
 
@@ -39,7 +35,7 @@ lineBot.use('*', async (c, next) => {
 async function handleLineEvent(event: WebhookEvent) {
   try {
     if (event.source.userId) {
-      lineClient.showLoadingAnimation({
+      line.showLoadingAnimation({
         chatId: event.source.userId,
       })
     }
@@ -57,7 +53,7 @@ async function handleLineEvent(event: WebhookEvent) {
         const saleId = extractSaleIdFromUrl(text)
 
         if (!saleId) {
-          return lineClient.replyMessage({
+          return line.replyMessage({
             replyToken: event.replyToken,
             messages: [
               {
@@ -73,7 +69,7 @@ async function handleLineEvent(event: WebhookEvent) {
           locale: 'zh-tw',
         })
 
-        return lineClient.replyMessage({
+        return line.replyMessage({
           replyToken: event.replyToken,
           messages: [
             {
@@ -100,7 +96,7 @@ ${sales.name} 目前「${sales.status !== SalesStatus.SoldOut ? '有貨' : '缺�
     }
   } catch (e) {
     if ('replyToken' in event) {
-      return lineClient.replyMessage({
+      return line.replyMessage({
         replyToken: event.replyToken,
         messages: [
           {
