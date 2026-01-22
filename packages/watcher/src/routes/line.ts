@@ -83,11 +83,11 @@ async function handleLineMessage(
           actions: [
             ...sale.option.options.map((option) => ({
               label: option.saleOptionName,
-              message: `/訂閱 ${saleId} ${option.saleStockId}`,
+              message: `${Commands.Subscribe} ${saleId} ${option.saleStockId}`,
             })),
             {
               label: '訂閱任一品項',
-              message: `/訂閱 ${saleId}`,
+              message: `${Commands.Subscribe} ${saleId}`,
             },
           ],
         }),
