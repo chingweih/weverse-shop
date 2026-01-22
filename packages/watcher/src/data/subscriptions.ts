@@ -1,7 +1,32 @@
+import { eq } from 'drizzle-orm'
 import { db } from '../db'
 import { subscriptionsTable } from '../db/schema'
 import { getProductBySaleId } from './products'
 import { getVariantByStockId } from './variants'
+
+export async function getSubscriptionsByUserId({ userId }: { userId: number }) {
+  return await db.query.subscriptionsTable.findMany({
+    with: {
+      variant: true,
+    },
+    where: eq(subscriptionsTable.userId, userId),
+  })
+}
+
+export async function getSubscription({ id }: { id: number }) {
+  return await db.query.subscriptionsTable.findFirst({
+    where: eq(subscriptionsTable.id, id),
+  })
+}
+
+export async function deleteSubscription({ id }: { id: number }) {
+  const [deletedSubscription] = await db
+    .delete(subscriptionsTable)
+    .where(eq(subscriptionsTable.id, id))
+    .returning()
+
+  return deletedSubscription
+}
 
 export async function upsertSubscription({
   userId,

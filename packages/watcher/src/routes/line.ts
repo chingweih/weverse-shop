@@ -13,7 +13,12 @@ import { Context, Hono } from 'hono'
 import { line } from '../apis/line'
 import { Commands } from '../constants/commands'
 import { isProductStored, upsertProduct } from '../data/products'
-import { upsertSubscription } from '../data/subscriptions'
+import {
+  deleteSubscription,
+  getSubscription,
+  getSubscriptionsByUserId,
+  upsertSubscription,
+} from '../data/subscriptions'
 import { User } from '../data/types'
 import { getUser } from '../data/users'
 import { isVariantStored, upsertVariantsFromSale } from '../data/variants'
@@ -132,13 +137,84 @@ async function handleLineMessage(
     })
   }
 
+  if (text.startsWith(Commands.ListSubscription)) {
+    const subscriptions = await getSubscriptionsByUserId({ userId: user.id })
+
+    if (subscriptions.length === 0) {
+      return line.replyMessage({
+        replyToken,
+        messages: [{ type: 'text', text: '現在還沒有訂閱哦，開始新增吧！' }],
+      })
+    }
+
+    return line.replyMessage({
+      replyToken,
+      messages: [
+        card({
+          title: '現有訂閱',
+          description: '以下是你現在有訂閱的品項，點擊即可刪除',
+          imageUrl: 'https://picsum.photos/200/300', // TODO: Replace placeholder image
+          actions: subscriptions.map((sub) => ({
+            label: sub.variant?.variantName ?? '無品名', // TODO: Fix type and include product only subscription name
+            message: `${Commands.DeleteSubscription} ${sub.id}`,
+          })),
+        }),
+      ],
+    })
+  }
+
+  if (text.startsWith(Commands.DeleteSubscription)) {
+    const id = Number(text.replace(Commands.DeleteSubscription, '').trim())
+
+    const subscription = await getSubscription({ id })
+
+    if (!subscription) {
+      return line.replyMessage({
+        replyToken,
+        messages: [
+          {
+            type: 'text',
+            text: '訂閱不存在',
+          },
+        ],
+      })
+    }
+
+    if (user.id != subscription?.userId) {
+      return line.replyMessage({
+        replyToken,
+        messages: [
+          {
+            type: 'text',
+            text: '無法刪除此訂閱（這不是你的）',
+          },
+        ],
+      })
+    }
+
+    const deletedSubscription = await deleteSubscription({ id })
+
+    if (deletedSubscription) {
+      return line.replyMessage({
+        replyToken,
+        messages: [
+          {
+            type: 'text',
+            text: '刪除成功',
+          },
+        ],
+      })
+    }
+  }
+
   return line.replyMessage({
     replyToken,
     messages: [
       {
         type: 'text',
         text: `哈囉，請輸入以下指令來跟機器人互動
-- ${Commands.Track} {Weverse Shop 連結}：開始選擇訂閱機制`,
+- ${Commands.Track} {Weverse Shop 連結}：開始選擇訂閱機制
+- ${Commands.ListSubscription}：列出已訂閱的商品通知`,
       },
     ],
   })
@@ -154,7 +230,7 @@ async function handleLineEvent(c: Context<LineBotRoute>, event: WebhookEvent) {
     return null
   }
 
-  line.showLoadingAnimation({
+  await line.showLoadingAnimation({
     chatId: lineUserId,
   })
 
