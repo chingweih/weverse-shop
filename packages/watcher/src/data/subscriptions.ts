@@ -28,14 +28,7 @@ export async function upsertSubscription({
       productId: product.id,
       variantId: variant?.id,
     })
-    .onConflictDoUpdate({
-      target: [
-        subscriptionsTable.userId,
-        subscriptionsTable.productId,
-        subscriptionsTable.variantId,
-      ],
-      set: { userId, productId: product.id, variantId: variant?.id },
-    })
+    .onConflictDoNothing()
     .returning()
 
   return subscription
