@@ -10,7 +10,6 @@ function shouldNotify({
   previous: boolean
   current: boolean
 }) {
-  return true
   // Previously out of stock, now in stock
   return !previous && current
 }
