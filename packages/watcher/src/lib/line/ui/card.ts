@@ -6,12 +6,14 @@ export function card({
   description,
   imageUrl,
   actions,
+  customFooter,
 }: {
   alt?: string
   title: string
   description: string
   imageUrl: string
-  actions: { label: string; message: string }[]
+  actions?: { label: string; message: string }[]
+  customFooter?: messagingApi.FlexComponent[]
 }): messagingApi.Message {
   return {
     type: 'flex',
@@ -54,19 +56,22 @@ export function card({
         type: 'box',
         layout: 'vertical',
         spacing: 'sm',
-        contents: actions.map(
-          ({ label, message }) =>
-            ({
-              type: 'button',
-              style: 'link',
-              height: 'sm',
-              action: {
-                type: 'message',
-                label,
-                text: message,
-              },
-            }) as const,
-        ),
+        contents: [
+          ...(actions ?? []).map(
+            ({ label, message }) =>
+              ({
+                type: 'button',
+                style: 'link',
+                height: 'sm',
+                action: {
+                  type: 'message',
+                  label,
+                  text: message,
+                },
+              }) as const,
+          ),
+          ...(customFooter ?? []),
+        ],
         flex: 0,
       },
     },
