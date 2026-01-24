@@ -25,7 +25,6 @@ export async function handleLineMessage(
 
   const user = c.get('user')
 
-  const { replyToken } = event
   const { text } = event.message
 
   if (text.startsWith(Commands.Track)) {
