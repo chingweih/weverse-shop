@@ -16,11 +16,7 @@ export default {
 
   // Cron job hanlder
   // Run every 15 minutes, see wrangler.jsonc for more information
-  scheduled: async (
-    controller: ScheduledController,
-    env: Cloudflare.Env,
-    ctx: ExecutionContext,
-  ) => {
+  scheduled: async (controller, env, ctx) => {
     ctx.waitUntil(handleScheduledTask())
   },
-}
+} satisfies ExportedHandler<Cloudflare.Env, unknown, unknown>
