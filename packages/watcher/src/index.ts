@@ -14,7 +14,7 @@ export default {
   // REST API Handler
   fetch: app.fetch,
 
-  // Cron job hanlder
+  // Cron job handler
   // Run every 15 minutes, see wrangler.jsonc for more information
   scheduled: async (controller, env, ctx) => {
     ctx.waitUntil(handleScheduledTask())

@@ -1,11 +1,11 @@
-import { env } from "cloudflare:workers";
+import { env } from 'cloudflare:workers'
 
-export async function slack({text}: {text: string}) {
+export async function slack({ text }: { text: string }) {
   const response = await fetch(env.SLACK_WEBHOOK_URL, {
     method: 'POST',
     body: JSON.stringify({
-      text
-    })
+      text,
+    }),
   })
 
   if (!response.ok) {

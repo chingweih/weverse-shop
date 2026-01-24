@@ -3,8 +3,8 @@ import { eq, sql } from 'drizzle-orm'
 import { db } from '../db'
 import { productsTable } from '../db/schema'
 
-export async function getProductBySaleId({ saleId }: { saleId: string }) {
-  return await db.query.productsTable.findFirst({
+export function getProductBySaleId({ saleId }: { saleId: string }) {
+  return db.query.productsTable.findFirst({
     where: eq(productsTable.saleId, saleId),
   })
 }
