@@ -15,7 +15,8 @@
     "@weverse-shop/core": "workspace:*",
     "drizzle-orm": "^0.45.1",
     "drizzle-zod": "^0.8.3",
-    "hono": "^4.11.4"
+    "hono": "^4.11.4",
+    "neverthrow": "^8.2.0"
   },
   "devDependencies": {
     "@types/node": "^25.0.10",
