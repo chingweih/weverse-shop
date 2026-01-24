@@ -62,6 +62,11 @@ export function LandingPage() {
   return (
     <html>
       <head>
+        <title>有貨噴霧｜自動追蹤商品貨況</title>
+        <meta
+          name='viewport'
+          content='viewport-fit=cover, width=device-width, user-scalable=no, minimum-scale=1, initial-scale=1'
+        />
         <link
           rel='stylesheet'
           href='https://cdn.jsdelivr.net/npm/tailwindcss-preflight@1.0.1/preflight.min.css'
