@@ -1,4 +1,9 @@
 import { saleDataSchema } from './types'
+import {
+  InvalidResponseStructureError,
+  SaleNotFoundError,
+  ValidationError,
+} from './errors'
 
 import type { SaleData } from './types'
 
@@ -39,39 +44,40 @@ function isNextDataResponse(data: unknown): data is NextDataResponse {
 
 export function parseNextDataResponse(rawJson: unknown): SaleData {
   if (!isNextDataResponse(rawJson)) {
-    throw new Error(
+    throw new InvalidResponseStructureError(
       'Invalid Next.js data response structure.\n' +
         'Expected pageProps.$dehydratedState.queries array.\n' +
-        'The API response format may have changed.'
+        'The API response format may have changed.',
+      rawJson,
     )
   }
 
   const queries = rawJson.pageProps.$dehydratedState.queries
   const saleQuery = queries.find((query) => {
     const queryKey = query.queryKey
-    return Array.isArray(queryKey) && queryKey[0] === 'GET:/api/v1/sales/:saleId'
+    return (
+      Array.isArray(queryKey) && queryKey[0] === 'GET:/api/v1/sales/:saleId'
+    )
   })
 
   if (!saleQuery) {
-    throw new Error(
-      'Sale data not found in response.\n' +
-        'Could not find query with key "GET:/api/v1/sales/:saleId".\n' +
-        'Available query keys: ' +
-        queries.map((q) => (Array.isArray(q.queryKey) ? q.queryKey[0] : 'unknown')).join(', ')
+    const availableQueryKeys = queries.map((q) =>
+      Array.isArray(q.queryKey) ? String(q.queryKey[0]) : 'unknown',
     )
+
+    // Extract saleId from the query if available
+    const saleIdMatch = queries
+      .flatMap((q) => (Array.isArray(q.queryKey) ? q.queryKey : []))
+      .find((key) => typeof key === 'number')
+
+    throw new SaleNotFoundError(saleIdMatch ?? 0, availableQueryKeys)
   }
 
   const saleData = saleQuery.state.data
   const parseResult = saleDataSchema.safeParse(saleData)
 
   if (!parseResult.success) {
-    throw new Error(
-      'Failed to validate sale data structure.\n' +
-        'Validation errors:\n' +
-        parseResult.error.issues
-          .map((issue) => `  - ${issue.path.join('.')}: ${issue.message}`)
-          .join('\n')
-    )
+    throw new ValidationError(parseResult.error.issues, saleData)
   }
 
   return parseResult.data
@@ -85,7 +91,9 @@ export function extractArtistIdFromResponse(rawJson: unknown): number | null {
   const queries = rawJson.pageProps.$dehydratedState.queries
   const saleQuery = queries.find((query) => {
     const queryKey = query.queryKey
-    return Array.isArray(queryKey) && queryKey[0] === 'GET:/api/v1/sales/:saleId'
+    return (
+      Array.isArray(queryKey) && queryKey[0] === 'GET:/api/v1/sales/:saleId'
+    )
   })
 
   if (!saleQuery) {

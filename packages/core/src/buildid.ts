@@ -1,6 +1,7 @@
 import * as cheerio from 'cheerio'
 
 import { SHOP_BASE_URL, BUILDID_CACHE_TTL } from './constants'
+import { HttpFetchError, BuildIdExtractionError } from './errors'
 
 import type { BuildIdCacheData } from './types'
 
@@ -11,10 +12,13 @@ export async function fetchBuildIdFromHomepage(): Promise<string> {
   const response = await fetch(SHOP_BASE_URL)
 
   if (!response.ok) {
-    throw new Error(
-      `Failed to fetch Weverse Shop homepage (HTTP ${response.status}): ${response.statusText}\n` +
-        `URL: ${SHOP_BASE_URL}`
-    )
+    const responseBody = await response.text()
+    throw new HttpFetchError({
+      status: response.status,
+      statusText: response.statusText,
+      url: SHOP_BASE_URL,
+      responseBody,
+    })
   }
 
   const html = await response.text()
@@ -41,10 +45,7 @@ export async function fetchBuildIdFromHomepage(): Promise<string> {
     return buildId
   }
 
-  throw new Error(
-    'Failed to extract buildId from Weverse Shop homepage.\n' +
-      'The page structure may have changed. Please report this issue.'
-  )
+  throw new BuildIdExtractionError(html)
 }
 
 export function readBuildIdCache(): BuildIdCacheData | null {

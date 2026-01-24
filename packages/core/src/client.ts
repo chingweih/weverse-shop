@@ -1,6 +1,7 @@
 import { SHOP_BASE_URL, DEFAULT_LOCALE, DEFAULT_CURRENCY } from './constants'
 import { getBuildId } from './buildid'
 import { parseNextDataResponse, extractArtistIdFromResponse } from './parser'
+import { HttpFetchError } from './errors'
 
 import type { SaleData, GetSaleOptions, Locale, Currency } from './types'
 
@@ -9,7 +10,7 @@ function buildDataUrl(
   saleId: number,
   artistId: number,
   locale: Locale,
-  currency: Currency
+  currency: Currency,
 ): string {
   const path = `/_next/data/${buildId}/${locale}/shop/${currency}/artists/${artistId}/sales/${saleId}.json`
   const params = new URLSearchParams({
@@ -25,23 +26,29 @@ async function fetchSaleData(
   saleId: number,
   artistId: number,
   locale: Locale,
-  currency: Currency
+  currency: Currency,
 ): Promise<{ json: unknown; response: Response }> {
   const url = buildDataUrl(buildId, saleId, artistId, locale, currency)
   const response = await fetch(url)
 
   if (!response.ok) {
-    throw new Error(
-      `Failed to fetch sale data (HTTP ${response.status}): ${response.statusText}\n` +
-        `URL: ${url}`
-    )
+    const responseBody = await response.text()
+    throw new HttpFetchError({
+      status: response.status,
+      statusText: response.statusText,
+      url,
+      responseBody,
+    })
   }
 
   const json = await response.json()
   return { json, response }
 }
 
-export async function getSale(saleId: number, options: GetSaleOptions = {}): Promise<SaleData> {
+export async function getSale(
+  saleId: number,
+  options: GetSaleOptions = {},
+): Promise<SaleData> {
   const locale = options.locale ?? DEFAULT_LOCALE
   const currency = options.currency ?? DEFAULT_CURRENCY
 
@@ -53,7 +60,13 @@ export async function getSale(saleId: number, options: GetSaleOptions = {}): Pro
   const initialArtistId = options.artistId ?? 2
 
   try {
-    const { json } = await fetchSaleData(buildId, saleId, initialArtistId, locale, currency)
+    const { json } = await fetchSaleData(
+      buildId,
+      saleId,
+      initialArtistId,
+      locale,
+      currency,
+    )
 
     // If artistId was not provided, extract it from the response for verification
     if (!options.artistId) {
@@ -65,7 +78,7 @@ export async function getSale(saleId: number, options: GetSaleOptions = {}): Pro
           saleId,
           extractedArtistId,
           locale,
-          currency
+          currency,
         )
         return parseNextDataResponse(correctJson)
       }
@@ -73,15 +86,21 @@ export async function getSale(saleId: number, options: GetSaleOptions = {}): Pro
 
     return parseNextDataResponse(json)
   } catch (error) {
-    // Check if error might be due to expired buildId
-    const errorMessage = error instanceof Error ? error.message : String(error)
-
-    if (errorMessage.includes('HTTP 404') || errorMessage.includes('not found')) {
-      console.warn('Got 404 error, buildId may be expired. Refreshing cache and retrying...')
+    // Force buildId refresh on 404 since Next.js rotates buildIds on deployment
+    if (error instanceof HttpFetchError && error.status === 404) {
+      console.warn(
+        'Got 404 error, buildId may be expired. Refreshing cache and retrying...',
+      )
 
       buildId = await getBuildId(true)
 
-      const { json } = await fetchSaleData(buildId, saleId, initialArtistId, locale, currency)
+      const { json } = await fetchSaleData(
+        buildId,
+        saleId,
+        initialArtistId,
+        locale,
+        currency,
+      )
       return parseNextDataResponse(json)
     }
 

@@ -2,6 +2,15 @@ export { getSale } from './client'
 export { getBuildId } from './buildid'
 export { parseNextDataResponse, extractArtistIdFromResponse } from './parser'
 
+export {
+  WeverseShopError,
+  HttpFetchError,
+  InvalidResponseStructureError,
+  SaleNotFoundError,
+  ValidationError,
+  BuildIdExtractionError,
+} from './errors'
+
 export type {
   SaleData,
   ArtistInfo,
