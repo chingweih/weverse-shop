@@ -22,7 +22,8 @@ export async function handleLineMessage(
     message: { text },
   } = event
 
-  if (text.startsWith(Commands.Track)) {
+  // Also match with pure url
+  if (text.startsWith(Commands.Track) || text.startsWith('https://')) {
     return await handleTrackCommand(c, event.message)
   }
 
@@ -42,7 +43,7 @@ export async function handleLineMessage(
   return await reply(
     c,
     `哈囉，請輸入以下指令來跟機器人互動
-- ${Commands.Track} {Weverse Shop 連結}：開始選擇訂閱機制
+- 直接貼上 Weverse Shop 連結，開始選擇訂閱機制
 - ${Commands.ListSubscription}：列出已訂閱的商品通知`,
   )
 }
