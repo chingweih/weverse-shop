@@ -18,8 +18,6 @@ export async function handleLineMessage(
     throw new MessageTypeNotSupportedError(event.message.type)
   }
 
-  const user = c.get('user')
-
   const {
     message: { text },
   } = event
