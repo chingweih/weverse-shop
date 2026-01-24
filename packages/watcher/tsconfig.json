@@ -9,7 +9,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
     "rootDir": "./src",
-    "types": ["./worker-configuration.d.ts"],
+    "types": ["./worker-configuration.d.ts"]
   },
-  "exclude": ["drizzle.config.ts"],
+  "exclude": ["drizzle.config.ts"]
 }

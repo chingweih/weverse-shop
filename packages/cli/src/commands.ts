@@ -25,8 +25,12 @@ function formatPrice(price: number, currency: string): string {
 }
 
 function formatSalePretty(sale: SaleData, currency: string): string {
-  const availableOptions = sale.option.options.filter((opt) => !opt.isSoldOut).length
-  const soldOutOptions = sale.option.options.filter((opt) => opt.isSoldOut).length
+  const availableOptions = sale.option.options.filter(
+    (opt) => !opt.isSoldOut,
+  ).length
+  const soldOutOptions = sale.option.options.filter(
+    (opt) => opt.isSoldOut,
+  ).length
   const totalOptions = sale.option.options.length
 
   const optionsLine =
@@ -94,7 +98,9 @@ ${sale.orderLimitInfo.descriptions.map((d) => `   - ${d}`).join('\n')}
 `.trim()
 }
 
-export async function getSaleCommand(options: SaleCommandOptions): Promise<void> {
+export async function getSaleCommand(
+  options: SaleCommandOptions,
+): Promise<void> {
   try {
     if (options.refreshCache) {
       console.log('Refreshing buildId cache...')
@@ -116,7 +122,10 @@ export async function getSaleCommand(options: SaleCommandOptions): Promise<void>
       console.log(formatSalePretty(sale, options.currency))
     }
   } catch (error) {
-    console.error('\n[ERROR]', error instanceof Error ? error.message : String(error))
+    console.error(
+      '\n[ERROR]',
+      error instanceof Error ? error.message : String(error),
+    )
     if (error instanceof Error && error.stack) {
       console.error('\nStack trace:')
       console.error(error.stack)
