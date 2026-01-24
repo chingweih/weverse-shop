@@ -22,6 +22,13 @@
       "when": 1769063209623,
       "tag": "0002_unique_rhodey",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1769243403929,
+      "tag": "0003_daffy_pyro",
+      "breakpoints": true
     }
   ]
 }

@@ -1,7 +1,7 @@
 import { SaleData } from '@weverse-shop/core'
+import { eq, sql } from 'drizzle-orm'
 import { db } from '../db'
 import { productsTable } from '../db/schema'
-import { count, eq } from 'drizzle-orm'
 
 export async function getProductBySaleId({ saleId }: { saleId: string }) {
   return await db.query.productsTable.findFirst({
@@ -19,7 +19,7 @@ export async function upsertProduct({ sale }: { sale: SaleData }) {
     })
     .onConflictDoUpdate({
       target: [productsTable.type, productsTable.saleId],
-      set: { lastCheckedAt: new Date() },
+      set: { lastCheckedAt: sql`CURRENT_TIMESTAMP` },
     })
     .returning()
 

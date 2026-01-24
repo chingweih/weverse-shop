@@ -53,7 +53,10 @@ export async function upsertSubscription({
       productId: product.id,
       variantId: variant?.id,
     })
-    .onConflictDoNothing()
+    .onConflictDoUpdate({
+      target: subscriptionsTable.uniquenessKey,
+      set: { userId },
+    })
     .returning()
 
   return subscription

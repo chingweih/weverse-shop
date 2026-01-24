@@ -120,18 +120,11 @@ async function handleLineMessage(
       return null
     }
 
-    const insertedSubscription = await upsertSubscription({
+    const subscription = await upsertSubscription({
       userId: user.id,
       saleId,
       variantStockId,
     })
-
-    if (!insertedSubscription) {
-      return line.replyMessage({
-        replyToken,
-        messages: [{ type: 'text', text: '已完成訂閱（你可能已經訂閱過了）' }],
-      })
-    }
 
     return line.replyMessage({
       replyToken,

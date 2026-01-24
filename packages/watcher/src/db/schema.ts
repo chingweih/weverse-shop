@@ -1,4 +1,4 @@
-import { relations, sql } from 'drizzle-orm'
+import { relations, type SQL, sql } from 'drizzle-orm'
 import {
   index,
   int,
@@ -83,16 +83,18 @@ export const subscriptionsTable = sqliteTable(
     createdAt: int('created_at', { mode: 'timestamp' }).default(
       sql`CURRENT_TIMESTAMP`,
     ),
+    updatedAt: int('updated_at', { mode: 'timestamp' }).default(
+      sql`CURRENT_TIMESTAMP`,
+    ),
+    uniquenessKey: text('uniqueness_key')
+      .generatedAlwaysAs(
+        (): SQL =>
+          sql`${subscriptionsTable.userId} || ':' || ${subscriptionsTable.productId} || ':' || coalesce(${subscriptionsTable.variantId}, 'none')`,
+        { mode: 'virtual' },
+      )
+      .unique(),
   },
-  (table) => [
-    uniqueIndex('idx_subs_specific')
-      .on(table.userId, table.variantId)
-      .where(sql`${table.variantId} IS NOT NULL`),
-    uniqueIndex('idx_subs_any')
-      .on(table.userId, table.productId)
-      .where(sql`${table.variantId} IS NULL`),
-    index('idx_subs_product').on(table.productId),
-  ],
+  (table) => [index('idx_subs_product').on(table.productId)],
 )
 
 export const subscriptionsRelations = relations(

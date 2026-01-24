@@ -33,7 +33,10 @@ export async function upsertVariantsFromSale({
           : SalesStatus.InStock,
       })),
     )
-    .onConflictDoNothing()
+    .onConflictDoUpdate({
+      target: [variantsTable.productId, variantsTable.variantStockId],
+      set: { productId: product.id },
+    })
     .returning()
 
   return variants
