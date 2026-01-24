@@ -38,6 +38,12 @@ export const optionOrderLimitSchema = z.object({
   maxOrderQuantity: z.number(),
 })
 
+export const goodsOrderLimitSchema = z.object({
+  orderLimitType: z.string(),
+  maxOrderQuantity: z.number(),
+  availableQuantity: z.number(),
+})
+
 export const saleOptionSchema = z.object({
   saleStockId: z.number(),
   saleStockIds: z.array(z.number()),
@@ -77,7 +83,7 @@ export const saleDataSchema = z.object({
   price: priceInfoSchema,
   icons: z.array(z.string()),
   emblems: z.array(z.unknown()),
-  saleStartAt: z.string(),
+  saleStartAt: z.string().optional(),
   eventGuides: z.array(z.unknown()),
   shipping: shippingInfoSchema,
   orderLimitInfo: orderLimitInfoSchema,
@@ -91,6 +97,7 @@ export const saleDataSchema = z.object({
   isOrderLimitedPerUser: z.boolean(),
   isSeoReport: z.boolean(),
   option: optionInfoSchema,
+  goodsOrderLimit: goodsOrderLimitSchema.optional(),
   cautionInfos: z.array(z.unknown()),
   descriptionInfos: z.array(descriptionInfoSchema).optional(),
   notificationInfos: z.array(notificationInfoSchema),
@@ -104,6 +111,7 @@ export type ArtistInfo = z.infer<typeof artistInfoSchema>
 export type DetailImage = z.infer<typeof detailImageSchema>
 export type ShippingInfo = z.infer<typeof shippingInfoSchema>
 export type OrderLimitInfo = z.infer<typeof orderLimitInfoSchema>
+export type GoodsOrderLimit = z.infer<typeof goodsOrderLimitSchema>
 export type SaleOption = z.infer<typeof saleOptionSchema>
 export type OptionInfo = z.infer<typeof optionInfoSchema>
 export type NotificationInfo = z.infer<typeof notificationInfoSchema>
