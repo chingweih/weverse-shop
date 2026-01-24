@@ -3,7 +3,7 @@
 A monorepo for tracking Weverse Shop products and sending notifications when items come back in stock.
 
 > [!NOTE]
-> This is my hobby project to learn more about bun and cloudflare workers, feel free to let me know if you have any suggestions.
+> This is my hobby project to learn more about Bun and Cloudflare Workers. This project is not affiliated with the official Weverse Shop.
 
 ## Packages
 
