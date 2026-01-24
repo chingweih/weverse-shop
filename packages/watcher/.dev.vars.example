@@ -1,3 +1,4 @@
 SLACK_WEBHOOK_URL=<your_incoming_webhook_url>
 LINE_BOT_ACCESS_TOKEN=<your_access_token>
 LINE_BOT_SECRET=<your_secret>
+LINE_BOT_ID=<your_id>

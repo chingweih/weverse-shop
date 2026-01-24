@@ -3,7 +3,7 @@
 // Runtime types generated with workerd@1.20260116.0 2026-01-20 nodejs_compat
 declare namespace Cloudflare {
 	interface GlobalProps {
-		mainModule: typeof import("./src/index");
+		mainModule: typeof import("./src/index.tss");
 	}
 	interface Env {
 		SLACK_WEBHOOK_URL: string;
