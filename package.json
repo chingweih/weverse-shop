@@ -1,7 +1,13 @@
 {
   "name": "weverse-shop",
   "private": true,
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "format:fix": "prettier . --write",
+    "format:check": "prettier . -c"
+  },
   "devDependencies": {
     "prettier": "^3.8.0"
   }
