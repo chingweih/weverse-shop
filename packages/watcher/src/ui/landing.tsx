@@ -112,7 +112,7 @@ export function LandingPage() {
             <h1>有貨噴霧</h1>
             <p>自動追蹤商品庫存，補貨時發送 Line 通知，讓你全收速匯！</p>
             <a
-              href={`https://line.me/R/ti/p/${env.LINE_BOT_ID}`}
+              href={`https://line.me/R/ti/p/@${env.LINE_BOT_ID}`}
               target='_blank'
             >
               <button>加入好友</button>
