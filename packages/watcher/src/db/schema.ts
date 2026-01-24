@@ -91,7 +91,10 @@ export const subscriptionsTable = sqliteTable(
       )
       .unique(),
   },
-  (table) => [index('idx_subs_product').on(table.productId)],
+  (table) => [
+    index('idx_subs_product').on(table.productId),
+    index('idx_subs_user').on(table.userId),
+  ],
 )
 
 export const subscriptionsRelations = relations(
