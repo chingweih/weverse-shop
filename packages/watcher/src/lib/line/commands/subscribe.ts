@@ -49,9 +49,11 @@ export const handleSubscribeCommand = createTextCommand<
       return err(new ProductNotFoundError(saleId.toString()))
     }
 
-    const variantIsStored = await isVariantStored({ variantStockId })
-    if (variantStockId && !variantIsStored) {
-      return err(new VariantNotFoundError(variantStockId))
+    if (variantStockId) {
+      const variantIsStored = await isVariantStored({ variantStockId })
+      if (!variantIsStored) {
+        return err(new VariantNotFoundError(variantStockId))
+      }
     }
 
     const upsertSubscriptionResult = await ResultAsync.fromPromise(
