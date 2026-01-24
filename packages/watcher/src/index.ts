@@ -1,11 +1,12 @@
 import { Hono } from 'hono'
 import { lineBotRoute } from './routes/line'
 import { handleScheduledTask } from './scheduled'
+import { LandingPage } from './ui/landing'
 
 const app = new Hono()
 
 app.get('/', (c) => {
-  return c.text('Hello from @weverse-shop/watcher')
+  return c.render(LandingPage())
 })
 
 app.route('/line', lineBotRoute)
