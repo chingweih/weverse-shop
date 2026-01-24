@@ -83,9 +83,6 @@ export const subscriptionsTable = sqliteTable(
     createdAt: int('created_at', { mode: 'timestamp' }).default(
       sql`CURRENT_TIMESTAMP`,
     ),
-    updatedAt: int('updated_at', { mode: 'timestamp' }).default(
-      sql`CURRENT_TIMESTAMP`,
-    ),
     uniquenessKey: text('uniqueness_key')
       .generatedAlwaysAs(
         (): SQL =>

@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "dcd90f25-2da0-40b6-85a0-ad61b8a127cc",
+  "id": "a83e0c9d-eab6-4181-a197-0a549982e1a2",
   "prevId": "95b51b20-af37-4300-83f3-7835d2936f6d",
   "tables": {
     "products": {
@@ -42,7 +42,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": 1769243403923
+          "default": 1769245577033
         }
       },
       "indexes": {
@@ -93,14 +93,6 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
-        },
-        "updated_at": {
-          "name": "updated_at",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,

@@ -1,6 +1,5 @@
 DROP INDEX `idx_subs_specific`;--> statement-breakpoint
 DROP INDEX `idx_subs_any`;--> statement-breakpoint
-ALTER TABLE `subscriptions` ADD `updated_at` integer DEFAULT CURRENT_TIMESTAMP;--> statement-breakpoint
 ALTER TABLE `subscriptions` ADD `uniqueness_key` text GENERATED ALWAYS AS ("user_id" || ':' || "product_id" || ':' || coalesce("variant_id", 'none')) VIRTUAL;--> statement-breakpoint
 CREATE UNIQUE INDEX `subscriptions_uniqueness_key_unique` ON `subscriptions` (`uniqueness_key`);--> statement-breakpoint
 PRAGMA foreign_keys=OFF;--> statement-breakpoint
@@ -9,7 +8,7 @@ CREATE TABLE `__new_products` (
 	`type` text DEFAULT 'weverse',
 	`sale_id` text NOT NULL,
 	`last_checked_at` integer,
-	`created_at` integer DEFAULT 1769243403923
+	`created_at` integer DEFAULT 1769245577033
 );
 --> statement-breakpoint
 INSERT INTO `__new_products`("id", "type", "sale_id", "last_checked_at", "created_at") SELECT "id", "type", "sale_id", "last_checked_at", "created_at" FROM `products`;--> statement-breakpoint
