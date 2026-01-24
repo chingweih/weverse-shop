@@ -43,9 +43,8 @@ export async function handleLineMessage(
     return await reply(
       c,
       card({
-        alt: '商品查詢結果',
         imageUrl: sale.thumbnailImageUrls[0],
-        title: '【商品查詢結果】',
+        title: '商品查詢結果',
         description: `以下是 ${sale.name} 的所有品項，請選擇想要訂閱的品項，或是訂閱任一品項`,
         actions: [
           ...sale.option.options.map((option) => ({
